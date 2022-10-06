@@ -1,42 +1,56 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.nio.charset.StandardCharsets;
 
+/**
+ * This class is used to read and parse movies information from .csv file
+ */
 public class MovieAnalyzer {
-    List<Movie> movies;
-    public MovieAnalyzer(String dataset_path){
-        try {
-            File inputF = new File(dataset_path);
-            InputStream fs = new FileInputStream(inputF);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fs,StandardCharsets.UTF_8));
-            Function<String, Movie> MapToMovies = (line) -> {
-                String[] cols = combine(line.split(","));
-                Movie movie = new Movie();
-                movie.setSeries_Title(cols[1].equals("") ? null:cols[1]);
-                movie.setReleased_Year(cols[2].equals("") ? 0:Integer.parseInt(cols[2]));
-                movie.setCertificate(cols[3].equals("") ? null:cols[3]);
-                movie.setRuntime(cols[4].equals("") ? 0:Integer.parseInt(cols[4].replaceAll("[^0-9]","")));
-                movie.setGenre(cols[5].equals("") ? null:cols[5].replace(" ","").replace("\"","").split(","));
-                movie.setIMDB_Rating(cols[6].equals("") ? 0:Float.parseFloat(cols[6]));
-                movie.setOverview(cols[7].equals("") ? null:cols[7]);
-                movie.setMeta_score(cols[8].equals("") ? 0:Integer.parseInt(cols[8]));
-                movie.setDirector(cols[9].equals("") ? null:cols[9]);
-                String[] stars = new String[4];
-                stars[0]=cols[10].equals("") ? null:cols[10];
-                stars[1]=cols[11].equals("") ? null:cols[11];
-                stars[2]=cols[12].equals("") ? null:cols[12];
-                stars[3]=cols[13].equals("") ? null:cols[13];
-                movie.setStar(stars);
-                movie.setNoofvotes(cols[14].equals("") ? 0L:Long.parseLong(cols[14].replaceAll("[^0-9]","")));
-                movie.setGross(cols[15].equals("") ? 0L:Long.parseLong(cols[15].replaceAll("[^0-9]","")));
-                movie.StarCnt();
-                return movie;
-            };
-            this.movies = br.lines().skip(1).map(MapToMovies).collect(Collectors.toList());
-            br.close();
-        } catch (IOException e) {
+  List<Movie> movies;
+
+  /**
+   * take in file path and return a list containing Movie class and its information.
+
+   * @param dataset_path The file path of .csv
+   *
+  */
+  public MovieAnalyzer(String dataset_path) {
+    try {
+      File inputF = new File(dataset_path);
+      InputStream fs = new FileInputStream(inputF);
+      BufferedReader br = new BufferedReader(new InputStreamReader(fs, StandardCharsets.UTF_8));
+      Function<String, Movie> MapToMovies = (line) -> {
+        String[] cols = combine(line.split(","));
+        Movie movie = new Movie();
+        movie.setSeries_Title(cols[1].equals("") ? null : cols[1]);
+        movie.setReleased_Year(cols[2].equals("") ? 0 : Integer.parseInt(cols[2]));
+        movie.setCertificate(cols[3].equals("") ? null : cols[3]);
+        movie.setRuntime(cols[4].equals("") ? 0 : Integer.parseInt(cols[4]
+                                                         .replaceAll("[^0-9]", "")));
+        movie.setGenre(cols[5].equals("") ? null : cols[5].replace(" ", "")
+                                                          .replace("\"", "").split(","));
+        movie.setIMDB_Rating(cols[6].equals("") ? 0 : Float.parseFloat(cols[6]));
+        movie.setOverview(cols[7].equals("") ? null : cols[7]);
+        movie.setMeta_score(cols[8].equals("") ? 0 : Integer.parseInt(cols[8]));
+        movie.setDirector(cols[9].equals("") ? null : cols[9]);
+        String[] stars = new String[4];
+        stars[0] = cols[10].equals("") ? null : cols[10];
+        stars[1] = cols[11].equals("") ? null : cols[11];
+        stars[2] = cols[12].equals("") ? null : cols[12];
+        stars[3] = cols[13].equals("") ? null : cols[13];
+        movie.setStar(stars);
+        movie.setNoofvotes(cols[14].equals("") ? 0L :
+                Long.parseLong(cols[14].replaceAll("[^0-9]", "")));
+        movie.setGross(cols[15].equals("") ? 0L :
+                Long.parseLong(cols[15].replaceAll("[^0-9]", "")));
+        movie.StarCnt();
+        return movie;
+      };
+      this.movies = br.lines().skip(1).map(MapToMovies).collect(Collectors.toList());
+      br.close();
+    } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
